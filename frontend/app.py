@@ -62,7 +62,11 @@ if result:
         data = response.json()
 
         st.subheader("Generated Code")
-        st.code(data["generated_code"])
+        if "generated_code" in data:
+            st.subheader("Generated Code")
+            st.code(data["generated_code"])
+        else:
+            st.warning("No code generated.")
 
         st.subheader("Answer")
         st.write(data["result"])
