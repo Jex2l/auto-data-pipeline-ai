@@ -49,7 +49,23 @@ result = st.session_state.last_result
 
 if result:
     payload = result["result"]
+    st.subheader("Ask Questions About Your Data")
 
+    question = st.text_input("Ask something about your dataset")
+
+    if st.button("Ask"):
+        response = requests.post(
+            "http://127.0.0.1:8000/api/ask",
+            json={"question": question}
+        )
+
+        data = response.json()
+
+        st.subheader("Generated Code")
+        st.code(data["generated_code"])
+
+        st.subheader("Answer")
+        st.write(data["result"])
     st.subheader("Shapes")
     a, b = st.columns(2)
     a.metric("Original Rows", payload["original_shape"]["rows"])
@@ -69,3 +85,27 @@ if result:
     st.subheader("Preview")
     preview_df = pd.DataFrame(payload["preview"])
     st.dataframe(preview_df, use_container_width=True)
+
+    st.subheader("AI Analysis")
+
+    if "llm_analysis" in payload:
+        st.write(payload["llm_analysis"])
+
+    st.subheader("Quick Visualizations")
+
+    df = pd.DataFrame(payload["preview"])
+    if data.get("image"):
+        st.image(f"data:image/png;base64,{data['image']}")
+    numeric_cols = df.select_dtypes(include=['number']).columns
+
+    if len(numeric_cols) > 0:
+        col = numeric_cols[0]
+        st.write(f"Distribution of {col}")
+        st.bar_chart(df[col])
+    else:
+        st.info("No numeric columns available for chart.")
+
+    st.subheader("Generated SQL Queries")
+
+    if "sql_queries" in payload:
+        st.code(payload["sql_queries"], language="sql")

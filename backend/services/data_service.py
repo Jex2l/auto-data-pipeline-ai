@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-
+from agents.llm_agent import analyze_dataset
 import pandas as pd
-
+from agents.sql_agent import generate_sql
 from agents.cleaning_agent import clean_dataframe
 from agents.insight_agent import generate_basic_insights
 from agents.schema_agent import infer_schema_summary
@@ -57,20 +57,15 @@ def process_uploaded_csv(csv_path: Path) -> dict:
     }
 
     output_json.write_text(json.dumps(report_payload, indent=2, default=str))
-
+    sql_queries = generate_sql(cleaned_df)
     preview_records = cleaned_df.head(20).to_dict(orient="records")
-
+    llm_analysis = analyze_dataset(cleaned_df)
     return {
-        "original_shape": original_shape,
-        "cleaned_shape": {
-            "rows": int(cleaned_df.shape[0]),
-            "columns": int(cleaned_df.shape[1]),
-        },
-        "schema_before": schema_before,
-        "schema_after": schema_after,
-        "cleaning_report": cleaning_report,
-        "insights": insights,
-        "preview": preview_records,
-        "processed_csv_path": str(output_csv),
-        "report_json_path": str(output_json),
+        "cleaned_df": cleaned_df,  # ✅ REQUIRED
+        "preview": cleaned_df.head().to_dict(orient="records"),
+        "summary": {
+            "columns": list(cleaned_df.columns),
+            "shape": cleaned_df.shape,
+            "missing_values": cleaned_df.isnull().sum().to_dict()
+        }
     }
