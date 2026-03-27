@@ -4,28 +4,35 @@ OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL = "llama3"
 
 
-def generate_query_code(df, user_query):
+def generate_query_code(df, question):
     columns = ", ".join(df.columns)
 
     prompt = f"""
-You are a Python data analyst.
+    You are a Python data analyst.
 
-Dataset columns:
-{columns}
+    You are given a pandas dataframe named `df`.
 
-User question:
-{user_query}
+    Column names are:
+    {list(df.columns)}
 
-Write Python pandas code to answer this.
+    IMPORTANT RULES:
+    - Only use EXISTING column names exactly as given
+    - Do NOT guess column names
+    - Do NOT explain anything
+    - Do NOT use markdown
+    - ONLY output executable Python code
+    - Store final result in variable `result`
 
-Rules:
-- Use dataframe name: df
-- Only return code
-- If visualization is needed, use matplotlib
+    Allowed operations:
+    - df["col"].min()
+    - df["col"].max()
+    - df["col"].mean()
+    - df.sort_values()
+    - df.head()
 
-Example:
-result = df['salary'].mean()
-"""
+    Question:
+    {question}
+    """
 
     response = requests.post(
         OLLAMA_URL,

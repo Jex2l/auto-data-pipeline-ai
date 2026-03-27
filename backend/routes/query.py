@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -6,7 +8,6 @@ from backend.services.query_services import execute_query
 
 router = APIRouter()
 
-# Global storage (MVP only)
 GLOBAL_DF = None
 
 
@@ -15,7 +16,7 @@ class QueryRequest(BaseModel):
 
 
 @router.post("/ask")
-def ask_question(req: QueryRequest):
+def ask_question(req: QueryRequest) -> dict:
     global GLOBAL_DF
 
     if GLOBAL_DF is None:
@@ -24,7 +25,16 @@ def ask_question(req: QueryRequest):
             "error": "No dataset loaded",
             "generated_code": None,
             "result": None,
-            "image": None
+            "image": None,
+        }
+
+    if not req.question or not req.question.strip():
+        return {
+            "success": False,
+            "error": "Question cannot be empty",
+            "generated_code": None,
+            "result": None,
+            "image": None,
         }
 
     try:
@@ -36,14 +46,13 @@ def ask_question(req: QueryRequest):
             "generated_code": code,
             "result": str(result),
             "image": image,
-            "error": None
+            "error": None,
         }
-
-    except Exception as e:
+    except Exception as exc:
         return {
             "success": False,
-            "error": str(e),
+            "error": str(exc),
             "generated_code": None,
             "result": None,
-            "image": None
+            "image": None,
         }

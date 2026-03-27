@@ -1,0 +1,424 @@
+{
+  "original_shape": {
+    "rows": 22,
+    "columns": 6
+  },
+  "cleaned_shape": {
+    "rows": 22,
+    "columns": 6
+  },
+  "schema_before": {
+    "column_count": 6,
+    "row_count": 22,
+    "columns": [
+      {
+        "name": "Date",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 22,
+        "sample_values": [
+          "7/31/25",
+          "7/30/25",
+          "7/29/25"
+        ]
+      },
+      {
+        "name": "Close/Last",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 21,
+        "sample_values": [
+          "$68.08 ",
+          "$68.28 ",
+          "$67.96 "
+        ]
+      },
+      {
+        "name": "Volume",
+        "dtype": "int64",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 22,
+        "sample_values": [
+          "18529230",
+          "15518180",
+          "15261760"
+        ]
+      },
+      {
+        "name": "Open",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 22,
+        "sample_values": [
+          "$68.31 ",
+          "$67.84 ",
+          "$68.23 "
+        ]
+      },
+      {
+        "name": "High",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 22,
+        "sample_values": [
+          "$69.15 ",
+          "$68.58 ",
+          "$68.73 "
+        ]
+      },
+      {
+        "name": "Low",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 21,
+        "sample_values": [
+          "$67.88 ",
+          "$67.35 ",
+          "$67.83 "
+        ]
+      }
+    ]
+  },
+  "schema_after": {
+    "column_count": 6,
+    "row_count": 22,
+    "columns": [
+      {
+        "name": "date",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 22,
+        "sample_values": [
+          "7/31/25",
+          "7/30/25",
+          "7/29/25"
+        ]
+      },
+      {
+        "name": "closelast",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 21,
+        "sample_values": [
+          "$68.08",
+          "$68.28",
+          "$67.96"
+        ]
+      },
+      {
+        "name": "volume",
+        "dtype": "int64",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 22,
+        "sample_values": [
+          "18529230",
+          "15518180",
+          "15261760"
+        ]
+      },
+      {
+        "name": "open",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 22,
+        "sample_values": [
+          "$68.31",
+          "$67.84",
+          "$68.23"
+        ]
+      },
+      {
+        "name": "high",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 22,
+        "sample_values": [
+          "$69.15",
+          "$68.58",
+          "$68.73"
+        ]
+      },
+      {
+        "name": "low",
+        "dtype": "object",
+        "non_null_count": 22,
+        "null_count": 0,
+        "unique_count": 21,
+        "sample_values": [
+          "$67.88",
+          "$67.35",
+          "$67.83"
+        ]
+      }
+    ]
+  },
+  "cleaning_report": {
+    "original_rows": 22,
+    "original_columns": 6,
+    "cleaned_rows": 22,
+    "cleaned_columns": 6,
+    "duplicates_removed": 0,
+    "null_cells_before": 0,
+    "null_cells_after": 0,
+    "columns_after_cleaning": [
+      "date",
+      "closelast",
+      "volume",
+      "open",
+      "high",
+      "low"
+    ]
+  },
+  "insights": {
+    "row_count": 22,
+    "column_count": 6,
+    "numeric_columns": [
+      "volume"
+    ],
+    "categorical_columns": [
+      "date",
+      "closelast",
+      "open",
+      "high",
+      "low"
+    ],
+    "numeric_summary": {
+      "volume": {
+        "min": 11590040.0,
+        "max": 23985160.0,
+        "mean": 17024532.727272727,
+        "median": 15831630.0
+      }
+    },
+    "top_categories": {
+      "date": {
+        "7/31/25": 1,
+        "7/30/25": 1,
+        "7/2/25": 1,
+        "7/3/25": 1,
+        "7/7/25": 1
+      },
+      "closelast": {
+        "$68.59": 2,
+        "$68.08": 1,
+        "$67.37": 1,
+        "$69.37": 1,
+        "$68.93": 1
+      },
+      "open": {
+        "$68.31": 1,
+        "$67.84": 1,
+        "$68.68": 1,
+        "$68.18": 1,
+        "$69.08": 1
+      },
+      "high": {
+        "$69.15": 1,
+        "$68.58": 1,
+        "$68.94": 1,
+        "$69.47": 1,
+        "$69.30": 1
+      },
+      "low": {
+        "$68.18": 2,
+        "$67.88": 1,
+        "$66.98": 1,
+        "$68.61": 1,
+        "$68.35": 1
+      }
+    }
+  },
+  "preview": [
+    {
+      "date": "7/31/25",
+      "closelast": "$68.08",
+      "volume": 18529230,
+      "open": "$68.31",
+      "high": "$69.15",
+      "low": "$67.88"
+    },
+    {
+      "date": "7/30/25",
+      "closelast": "$68.28",
+      "volume": 15518180,
+      "open": "$67.84",
+      "high": "$68.58",
+      "low": "$67.35"
+    },
+    {
+      "date": "7/29/25",
+      "closelast": "$67.96",
+      "volume": 15261760,
+      "open": "$68.23",
+      "high": "$68.73",
+      "low": "$67.83"
+    },
+    {
+      "date": "7/28/25",
+      "closelast": "$67.92",
+      "volume": 20558380,
+      "open": "$67.75",
+      "high": "$67.96",
+      "low": "$67.37"
+    },
+    {
+      "date": "7/25/25",
+      "closelast": "$68.69",
+      "volume": 11590040,
+      "open": "$68.38",
+      "high": "$68.82",
+      "low": "$68.07"
+    },
+    {
+      "date": "7/24/25",
+      "closelast": "$68.29",
+      "volume": 13534010,
+      "open": "$68.36",
+      "high": "$68.59",
+      "low": "$67.92"
+    },
+    {
+      "date": "7/23/25",
+      "closelast": "$68.62",
+      "volume": 13042260,
+      "open": "$68.35",
+      "high": "$68.83",
+      "low": "$68.06"
+    },
+    {
+      "date": "7/22/25",
+      "closelast": "$68.16",
+      "volume": 14527150,
+      "open": "$68.34",
+      "high": "$68.60",
+      "low": "$68.08"
+    },
+    {
+      "date": "7/21/25",
+      "closelast": "$68.34",
+      "volume": 14674210,
+      "open": "$67.90",
+      "high": "$68.62",
+      "low": "$67.79"
+    },
+    {
+      "date": "7/18/25",
+      "closelast": "$68.05",
+      "volume": 16145080,
+      "open": "$68.78",
+      "high": "$68.84",
+      "low": "$67.96"
+    },
+    {
+      "date": "7/17/25",
+      "closelast": "$68.30",
+      "volume": 20400010,
+      "open": "$67.55",
+      "high": "$68.47",
+      "low": "$67.51"
+    },
+    {
+      "date": "7/16/25",
+      "closelast": "$67.37",
+      "volume": 15156130,
+      "open": "$67.15",
+      "high": "$67.56",
+      "low": "$66.98"
+    },
+    {
+      "date": "7/15/25",
+      "closelast": "$67.18",
+      "volume": 13944580,
+      "open": "$67.68",
+      "high": "$67.88",
+      "low": "$67.15"
+    },
+    {
+      "date": "7/14/25",
+      "closelast": "$67.82",
+      "volume": 16451390,
+      "open": "$67.83",
+      "high": "$68.03",
+      "low": "$67.20"
+    },
+    {
+      "date": "7/11/25",
+      "closelast": "$67.95",
+      "volume": 14699410,
+      "open": "$68.29",
+      "high": "$68.50",
+      "low": "$67.69"
+    },
+    {
+      "date": "7/10/25",
+      "closelast": "$68.76",
+      "volume": 15006060,
+      "open": "$69.26",
+      "high": "$69.39",
+      "low": "$68.56"
+    },
+    {
+      "date": "7/9/25",
+      "closelast": "$69.27",
+      "volume": 23765950,
+      "open": "$68.54",
+      "high": "$69.32",
+      "low": "$68.31"
+    },
+    {
+      "date": "7/8/25",
+      "closelast": "$68.59",
+      "volume": 21182570,
+      "open": "$68.80",
+      "high": "$68.92",
+      "low": "$68.35"
+    },
+    {
+      "date": "7/7/25",
+      "closelast": "$68.93",
+      "volume": 23985160,
+      "open": "$69.08",
+      "high": "$69.30",
+      "low": "$68.61"
+    },
+    {
+      "date": "7/3/25",
+      "closelast": "$69.37",
+      "volume": 17973500,
+      "open": "$68.18",
+      "high": "$69.47",
+      "low": "$68.18"
+    }
+  ],
+  "summary": {
+    "columns": [
+      "date",
+      "closelast",
+      "volume",
+      "open",
+      "high",
+      "low"
+    ],
+    "missing_values": {
+      "date": 0,
+      "closelast": 0,
+      "volume": 0,
+      "open": 0,
+      "high": 0,
+      "low": 0
+    }
+  },
+  "llm_analysis": "Based on the provided dataset, I'll provide my analysis:\n\n**What this dataset represents:**\n\nThis dataset appears to be a sample of historical stock market data for a specific company or index, capturing daily trading information such as opening prices, closing prices, high and low prices, volume traded, and dates. The data seems to span around 9 days in July 2025.\n\n**Key patterns:**\n\n1. **Trend:** The closing price appears to be trending upwards, with a slight dip on the 22nd (July 2025). This could indicate a general upward momentum in the stock's value.\n2. **Volatility:** The high and low prices are relatively close to each other, indicating moderate volatility in the market.\n3. **Volume:** Trading volume is generally increasing, except for the 25th (July 2025), which may suggest lower interest or trading activity on that day.\n\n**Data quality issues:**\n\n1. **Datetime format:** The dates seem to be in a human-readable format (MM/DD/YYYY), but it would be more consistent and easier to analyze if they were in a standardized datetime format (e.g., YYYY-MM-DD).\n2. **Price formatting:** Prices are formatted as currency strings ($X.XX) instead of numeric values, which might make calculations or analysis more challenging.\n3. **Missing values:** There are no missing values apparent in this sample, but it's essential to ensure that the dataset is complete and free from any gaps or NaN values.\n\n**Recommended next steps:**\n\n1. **Clean and preprocess data:** Convert datetime formats to a standardized format (e.g., YYYY-MM-DD), convert price strings to numeric values, and handle any missing values.\n2. **Explore additional features:** Consider adding more features such as moving averages, relative strength indices, or other technical indicators to gain deeper insights into the market trends and patterns.\n3. **Analyze and visualize data:** Use visualization tools (e.g., plots, charts) and statistical analysis techniques (e.g., regression, time series analysis) to uncover hidden patterns, correlations, and relationships within the data.\n4. **Consider longer-term context:** Look at the dataset in conjunction with other market indicators, news events, or economic factors to gain a more comprehensive understanding of the stock's performance.\n\nBy addressing these issues and taking the recommended next steps, you'll be able to extract valuable insights from this dataset and make informed decisions about future analysis or potential trading strategies.",
+  "sql_queries": "Here are three useful SQL queries for analysis:\n\n**Query 1: Daily Summary Statistics**\n```sql\nSELECT \n    date, \n    AVG(closelast) AS avg_close, \n    MIN(open) AS min_open, \n    MAX(high) AS max_high, \n    SUM(volume) AS total_volume\nFROM \n    your_table_name\nGROUP BY \n    date;\n```\n\n**Query 2: Daily Returns Analysis**\n```sql\nSELECT \n    date, \n    (closelast - LAG(closelast) OVER (ORDER BY date)) / LAG(closelast) OVER (ORDER BY date) AS daily_return\nFROM \n    your_table_name;\n```\n\n**Query 3: Top Volume Days**\n```sql\nSELECT \n    date, \n    volume\nFROM \n    your_table_name\nORDER BY \n    volume DESC\nLIMIT 10;\n```"
+}

@@ -1,32 +1,37 @@
-from fastapi import FastAPI, UploadFile
-import pandas as pd
+from __future__ import annotations
 
-app = FastAPI()
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-@app.post("/process")
-async def process_file(file: UploadFile):
-    try:
-        # Read uploaded file
-        df = pd.read_csv(file.file)
+from backend.routes.upload import router as upload_router
+from backend.routes.query import router as query_router
 
-        # Example cleaning
-        cleaned_df = df.dropna()
+app = FastAPI(
+    title="Auto Data Pipeline AI",
+    version="1.0.0",
+)
 
-        return {
-            "status": "success",
-            "original_shape": {
-                "rows": int(df.shape[0]),
-                "cols": int(df.shape[1])
-            },
-            "cleaned_shape": {
-                "rows": int(cleaned_df.shape[0]),
-                "cols": int(cleaned_df.shape[1])
-            },
-            "insights": "Data cleaned successfully"
-        }
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e)
-        }
+app.include_router(upload_router, prefix="/api", tags=["upload"])
+app.include_router(query_router, prefix="/api", tags=["query"])
+
+
+@app.get("/")
+def root() -> dict:
+    return {
+        "message": "Auto Data Pipeline AI backend is running."
+    }
+
+
+@app.get("/health")
+def health() -> dict:
+    return {
+        "status": "ok"
+    }
