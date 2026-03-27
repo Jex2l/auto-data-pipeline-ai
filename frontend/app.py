@@ -4,7 +4,7 @@ import requests
 import streamlit as st
 import pandas as pd
 
-API_BASE_URL = "http://127.0.0.1:8000"
+url = "http://127.0.0.1:8000/process"
 
 st.set_page_config(page_title="AI Data Engineer", layout="wide")
 st.title("AI Data Engineer MVP")
@@ -61,18 +61,54 @@ if result:
 
         data = response.json()
 
-        st.subheader("Generated Code")
-        if "generated_code" in data:
+        # 🧠 Handle failure first
+        if not data.get("success"):
+            st.error(data.get("error", "Unknown error"))
+            st.stop()
+
+        # 🔍 Debug (optional)
+        # st.write(data)
+
+        # 🧠 Generated Code
+        if data.get("generated_code"):
             st.subheader("Generated Code")
             st.code(data["generated_code"])
         else:
             st.warning("No code generated.")
 
+        # 🧠 Result
         st.subheader("Answer")
-        st.write(data["result"])
+        st.write(data.get("result", "No result returned"))
+
+        # 🧠 Image
+        if data.get("image"):
+            st.subheader("Visualization")
+            st.image(f"data:image/png;base64,{data['image']}")
     st.subheader("Shapes")
     a, b = st.columns(2)
-    a.metric("Original Rows", payload["original_shape"]["rows"])
+    if not isinstance(payload, dict):
+        st.error("Invalid response from backend")
+
+    elif payload.get("status") == "error":
+        st.error(payload.get("error", "Unknown error"))
+
+    else:
+        original_shape = payload.get("original_shape", {})
+        cleaned_shape = payload.get("cleaned_shape", {})
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                "Original Rows",
+                original_shape.get("rows", "N/A")
+            )
+
+        with col2:
+            st.metric(
+                "Cleaned Rows",
+                cleaned_shape.get("rows", "N/A")
+            )
     a.metric("Original Columns", payload["original_shape"]["columns"])
     b.metric("Cleaned Rows", payload["cleaned_shape"]["rows"])
     b.metric("Cleaned Columns", payload["cleaned_shape"]["columns"])

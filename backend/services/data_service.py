@@ -61,11 +61,22 @@ def process_uploaded_csv(csv_path: Path) -> dict:
     preview_records = cleaned_df.head(20).to_dict(orient="records")
     llm_analysis = analyze_dataset(cleaned_df)
     return {
-        "cleaned_df": cleaned_df,  # ✅ REQUIRED
-        "preview": cleaned_df.head().to_dict(orient="records"),
+        "cleaned_df": cleaned_df,
+
+        "original_shape": {
+            "rows": int(df.shape[0]),
+            "columns": int(df.shape[1])
+        },
+
+        "cleaned_shape": {
+            "rows": int(cleaned_df.shape[0]),
+            "columns": int(cleaned_df.shape[1])
+        },
+
+        "preview": cleaned_df.head(20).to_dict(orient="records"),
+
         "summary": {
             "columns": list(cleaned_df.columns),
-            "shape": cleaned_df.shape,
             "missing_values": cleaned_df.isnull().sum().to_dict()
         }
     }

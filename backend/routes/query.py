@@ -1,13 +1,12 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-import pandas as pd
 
 from agents.query_agent import generate_query_code
 from backend.services.query_services import execute_query
 
 router = APIRouter()
 
-# TEMP: store dataframe globally (later improve)
+# Global storage (MVP only)
 GLOBAL_DF = None
 
 
@@ -20,13 +19,31 @@ def ask_question(req: QueryRequest):
     global GLOBAL_DF
 
     if GLOBAL_DF is None:
-        return {"error": "No dataset loaded"}
+        return {
+            "success": False,
+            "error": "No dataset loaded",
+            "generated_code": None,
+            "result": None,
+            "image": None
+        }
 
-    code = generate_query_code(GLOBAL_DF, req.question)
-    result, image = execute_query(GLOBAL_DF, code)
+    try:
+        code = generate_query_code(GLOBAL_DF, req.question)
+        result, image = execute_query(GLOBAL_DF, code)
 
-    return {
-        "generated_code": code,
-        "result": str(result),
-        "image": image
-    }
+        return {
+            "success": True,
+            "generated_code": code,
+            "result": str(result),
+            "image": image,
+            "error": None
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "generated_code": None,
+            "result": None,
+            "image": None
+        }

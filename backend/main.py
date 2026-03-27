@@ -1,24 +1,32 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, UploadFile
+import pandas as pd
 
-from backend.routes.upload import router as upload_router
+app = FastAPI()
 
-app = FastAPI(
-    title="AI Data Engineer API",
-    version="1.0.0",
-    description="Upload CSV files, clean data, infer schema, and generate basic insights."
-)
+@app.post("/process")
+async def process_file(file: UploadFile):
+    try:
+        # Read uploaded file
+        df = pd.read_csv(file.file)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # tighten later for prod
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+        # Example cleaning
+        cleaned_df = df.dropna()
 
-app.include_router(upload_router, prefix="/api", tags=["data"])
+        return {
+            "status": "success",
+            "original_shape": {
+                "rows": int(df.shape[0]),
+                "cols": int(df.shape[1])
+            },
+            "cleaned_shape": {
+                "rows": int(cleaned_df.shape[0]),
+                "cols": int(cleaned_df.shape[1])
+            },
+            "insights": "Data cleaned successfully"
+        }
 
-@app.get("/health")
-async def health_check() -> dict:
-    return {"status": "ok"}
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e)
+        }

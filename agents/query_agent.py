@@ -35,5 +35,8 @@ result = df['salary'].mean()
             "stream": False
         }
     )
+    code = response.json().get("response", "").strip()
 
+    if not code:
+        code = "result = df.head()"
     return response.json()["response"]
