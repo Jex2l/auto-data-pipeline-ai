@@ -3,5 +3,5 @@ uvicorn
 pandas
 numpy
 streamlit
-langchain
-openai
+requests
+matplotlib

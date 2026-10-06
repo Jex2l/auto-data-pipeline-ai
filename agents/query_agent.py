@@ -46,4 +46,4 @@ def generate_query_code(df, question):
 
     if not code:
         code = "result = df.head()"
-    return response.json()["response"]
+    return code
