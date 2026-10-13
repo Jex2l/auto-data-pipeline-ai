@@ -18,6 +18,24 @@ This project bridges the gap between **data engineering, analytics, and AI**, en
 
 ---
 
+## 📑 Table of Contents
+
+* [Overview](#-overview)
+* [Key Features](#-key-features)
+* [Architecture](#️-architecture)
+* [Tech Stack](#️-tech-stack)
+* [Project Structure](#-project-structure)
+* [Installation & Setup](#️-installation--setup)
+* [How It Works](#-how-it-works)
+* [Error Handling](#-error-handling)
+* [Known Limitations](#known-limitations)
+* [Fixed in This Pass](#fixed-in-this-pass)
+* [Future Improvements](#-future-improvements)
+* [Key Learnings](#-key-learnings)
+* [Author](#-author)
+
+---
+
 ## 🧠 Key Features
 
 ### 📂 Data Ingestion
@@ -48,20 +66,42 @@ This project bridges the gap between **data engineering, analytics, and AI**, en
 
 ## 🏗️ Architecture
 
-```
-Streamlit UI  ──POST /api/upload (CSV)──►  FastAPI backend
-                                               │
-                                   pandas: schema profile (before/after),
-                                   dedup + normalize, basic numeric/
-                                   categorical stats
-                                               │
-                              cleaned CSV + JSON report → data/processed/
+The Streamlit UI never talks to pandas, Ollama, or the filesystem directly —
+every data operation goes through the FastAPI backend, which in turn calls
+plain-function "agents" for each step of the pipeline.
 
-Streamlit UI  ──POST /api/ask (question)──►  FastAPI backend
-                                               │
-                              asks a local Ollama server to write pandas
-                              code answering the question, runs it
-                              against the uploaded dataframe via exec()
+```
+┌───────────────────┐        ┌───────────────────────────┐        ┌──────────────────────────────┐
+│   Streamlit UI     │  HTTP  │        FastAPI backend      │  calls │        agents/ (plain fns)     │
+│  frontend/app.py   │ ─────► │   backend/routes/*.py +     │ ─────► │ schema_agent, cleaning_agent,  │
+│                     │        │   backend/services/*.py    │        │ insight_agent, llm_agent,      │
+└───────────────────┘        └───────────────────────────┘        │ sql_agent, query_agent          │
+                                                                     └──────────────────────────────┘
+
+Upload flow  (POST /api/upload, a CSV file)
+  routes/upload.py → services/data_service.process_uploaded_csv()
+    1. pandas reads the CSV
+    2. schema_agent.infer_schema_summary()   → schema BEFORE cleaning
+    3. cleaning_agent.clean_dataframe()      → dedup, normalize columns,
+                                                 null-token cleanup, numeric
+                                                 coercion
+    4. schema_agent.infer_schema_summary()   → schema AFTER cleaning
+    5. insight_agent.generate_basic_insights() → numeric/categorical stats
+    6. llm_agent.analyze_dataset()           → asks Ollama for a prose
+                                                 summary of the cleaned data
+    7. sql_agent.generate_sql()              → asks Ollama for 3 example
+                                                 SQL queries
+    → cleaned CSV + JSON report written to data/processed/
+    → cleaned dataframe kept in-memory as the "current dataset"
+      (backend.routes.query.GLOBAL_DF)
+
+Ask flow  (POST /api/ask, a natural-language question)
+  routes/query.py → agents/query_agent.generate_query_code()
+    asks the local Ollama server to turn the question into pandas code
+    that stores its answer in a `result` variable
+  → services/query_services.execute_query()
+    runs that code via exec() against the in-memory dataframe, captures
+    any matplotlib figure it produced, and returns (result, chart PNG)
 ```
 
 ---
@@ -129,6 +169,56 @@ auto-data-pipeline-ai/
 future work rather than implemented features. Tests cover schema inference
 and cleaning logic only; the upload/query routes and the Ollama-dependent
 agents aren't covered.
+
+### What each piece does
+
+**`backend/`**
+* `main.py` — creates the FastAPI app, enables permissive CORS, and mounts
+  the upload and query routers under `/api`.
+* `routes/upload.py` — `/api/upload` endpoint: validates the file is a CSV
+  under 25MB, saves it under `data/raw/`, runs it through
+  `data_service.process_uploaded_csv()`, and stashes the cleaned dataframe
+  for later questions.
+* `routes/query.py` — `/api/ask` endpoint: holds the in-memory
+  `GLOBAL_DF`, generates pandas code for the question via
+  `agents.query_agent`, and runs it via `query_services.execute_query()`.
+* `services/data_service.py` — orchestrates the full upload pipeline
+  (read CSV → schema before → clean → schema after → insights → LLM
+  analysis → SQL suggestions), writes the cleaned CSV + JSON report to
+  `data/processed/`.
+* `services/query_services.py` — executes LLM-generated pandas code
+  against the dataframe with `exec()`, captures a matplotlib figure if one
+  was drawn, and returns it as a base64 PNG.
+
+**`agents/`**
+* `schema_agent.py` — `infer_schema_summary()`: per-column dtype, null
+  counts, unique counts, and a few sample values.
+* `cleaning_agent.py` — `clean_dataframe()`: normalizes column names,
+  strips whitespace, replaces common null tokens (`"n/a"`, `"null"`, …),
+  coerces numeric-looking columns, drops duplicate/empty rows and columns,
+  and returns a before/after report.
+* `insight_agent.py` — `generate_basic_insights()`: min/max/mean/median for
+  up to 10 numeric columns and top-5 value counts for up to 10 categorical
+  columns.
+* `llm_agent.py` — `analyze_dataset()`: sends a sample of the cleaned data
+  to the local Ollama server and asks for a prose summary (what the data
+  represents, patterns, quality issues, next steps).
+* `sql_agent.py` — `generate_sql()`: asks Ollama for 3 example SQL queries
+  based on the dataset's column names.
+* `query_agent.py` — `generate_query_code()`: turns a natural-language
+  question into pandas code (storing the answer in a `result` variable),
+  with a `result = df.head()` fallback if Ollama returns nothing.
+* `pipeline_agent.py` *(unwired, see Known limitations)* —
+  `generate_pandas_pipeline_code()` / `save_generated_pipeline()`: would
+  generate a standalone pandas script that deduplicates and projects a
+  fixed column list.
+* `utils.py` *(unwired, see Known limitations)* — `ensure_dir()`: a
+  one-line `mkdir -p` helper.
+
+**`frontend/app.py`** — the entire Streamlit UI: file upload, a "Process
+File" / "Clear Results" action pair, rendering of shapes/schema/insights/
+preview/AI analysis/SQL, a question box for `/api/ask`, and a quick
+line-chart visualizer over the preview rows.
 
 ---
 
